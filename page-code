@@ -1,0 +1,50 @@
+import wixData from 'wix-data';
+
+$w.onReady(function () {
+    
+});
+
+export function pupFilterGroup_change(event) {
+    filterPups()
+}
+
+export function ageGroup_change(event) {
+    filterPups()
+}
+
+export function filterPups() {
+    let filters = []
+    let kids = []
+    let pupOptions = $w("#pupFilterGroup").selectedIndices
+    let ageOptions = $w('#ageGroup').selectedIndices
+
+    if (ageOptions.length > 0 || pupOptions.length > 0) {
+
+        for (var i = 0; i < ageOptions.length; i++) {
+            filters.push($w('#ageGroup').options[ageOptions[i]].value);
+        }
+        if (pupOptions.length > 0) {
+            kids = $w("#pupFilterGroup").value
+        }
+
+        if (kids.length > 0 && filters.length > 0) {
+            $w("#dataset1").setFilter(wixData.filter()
+                .hasSome("ageGroup", filters)
+                .and(wixData.filter()
+                    .hasSome("kidFriendly", kids)
+                )
+            );
+        } else {
+            $w("#dataset1").setFilter(wixData.filter()
+                .hasSome("ageGroup", filters)
+                .or(wixData.filter()
+                    .hasSome("kidFriendly", kids)
+                )
+            );
+        }
+
+    } else {
+        $w("#dataset1").setFilter(wixData.filter());
+    }
+
+}
